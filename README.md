@@ -1,71 +1,77 @@
-# hello-bible README
+# Hello Bible
 
-This is the README for your extension "hello-bible". After writing up a brief description, we recommend including the following sections.
+A minimal Visual Studio Code extension that brings a Bible verse into your editor, one command away.
+
+Hello Bible was built as a hands-on study of the VS Code Extension API, covering command registration, the extension activation lifecycle, and the notification UI, while producing something small, pleasant, and genuinely usable in a daily coding routine.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Show a verse on demand.** Run the `Bible: Show Verse` command from the Command Palette and the verse is displayed in an information notification, without leaving your current file.
+- **Zero friction.** No configuration, no account, no network requests. The verse ships with the extension and is shown instantly.
+- **Stays out of your way.** The extension contributes a single command and does nothing until you invoke it.
 
-For example if there is an image subfolder under your extension project workspace:
+### Usage
 
-\!\[feature X\]\(images/feature-x.png\)
+1. Open the Command Palette with `Ctrl+Shift+P` (Windows and Linux) or `Cmd+Shift+P` (macOS).
+2. Type **Bible: Show Verse** and press `Enter`.
+3. The verse appears as a notification in the lower-right corner of the window.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+The current release ships with a single verse, John 3:16, in Brazilian Portuguese.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+None. Hello Bible has no runtime dependencies and requires only Visual Studio Code version 1.125.0 or later.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-- `myExtension.enable`: Enable/disable this extension.
-- `myExtension.thing`: Set to `blah` to do something.
+This extension does not contribute any settings yet. Configuration options such as choosing a translation or enabling a verse at startup are planned for a future release.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- The verse is currently hardcoded, so every invocation shows the same passage.
+- Only one translation and language (Brazilian Portuguese) is available.
+- Long verses may be truncated by the VS Code notification area, which is expected behavior for information messages.
+
+If you run into something else, please open an issue.
+
+## Roadmap
+
+- A rotating or random verse per invocation.
+- A daily verse shown automatically on startup, behind an opt-in setting.
+- Support for multiple translations and languages.
+- Insert the selected verse directly into the active editor.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.0.1
 
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+- Initial release.
+- Adds the `Bible: Show Verse` command, which displays John 3:16 in an information notification.
 
 ---
 
+## Contributing
+
+Contributions are welcome. To run the extension locally:
+
+```bash
+npm install
+npm run compile
+```
+
+Then press `F5` in VS Code to launch an Extension Development Host with Hello Bible loaded.
+
+Useful scripts:
+
+- `npm run watch`: recompile on every change.
+- `npm run lint`: run ESLint over `src`.
+- `npm run format`: format the project with Prettier.
+- `npm test`: run the extension test suite.
+
 ## Following extension guidelines
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+This extension follows the official Visual Studio Code extension guidelines.
 
 - [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-- Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-- Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-- Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-- [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-- [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!**
