@@ -36,7 +36,8 @@
                 {
                     "type": "webview",
                     "id": "hello-bible.view",
-                    "name": "Bible"
+                    "name": "Bible",
+                    "icon": "media/book.svg"
                 }
             ]
         }
