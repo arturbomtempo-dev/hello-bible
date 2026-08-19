@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { Verse } from '../models/Verse';
 import { BibleService } from '../services/BibleService';
 
 export class BibleViewProvider implements vscode.WebviewViewProvider {
@@ -10,25 +11,19 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
     ) {}
 
     resolveWebviewView(webviewView: vscode.WebviewView): void {
+        const verse = this.bibleService.getDailyVerse();
+
         webviewView.webview.options = {
             enableScripts: true,
         };
 
-        webviewView.webview.html = this.getHtmlContent();
-
-        webviewView.webview.onDidReceiveMessage((message) => {
-            if (message.command === 'newVerse') {
-                const verse = this.bibleService.getRandomVerse();
-
-                webviewView.webview.postMessage({
-                    command: 'updateVerse',
-                    verse,
-                });
-            }
-        });
+        webviewView.webview.html = this.getHtmlContent(verse);
     }
 
-    private getHtmlContent(): string {
+    private getHtmlContent(verse: Verse): string {
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString('pt-BR');
+
         return `
             <!doctype html>
             <html lang="pt-BR">
@@ -193,6 +188,16 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                             margin: 0;
                         }
 
+                        .date {
+                            font-family: var(--font-sans);
+                            font-size: 11px;
+                            font-weight: 500;
+                            letter-spacing: 0.04em;
+                            color: var(--text-muted);
+                            margin: var(--space-md) 0 0;
+                            text-align: right;
+                        }
+
                         .new-verse-btn {
                             display: inline-flex;
                             align-items: center;
@@ -285,53 +290,16 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                             <div class="verse-wrap">
                                 <span class="quote-mark">&ldquo;</span>
                                 <p id="verse" class="verse">
-                                    Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para
-                                    que todo aquele que nele crê não pereça, mas tenha a vida eterna.
+                                    ${verse.text}
                                 </p>
                             </div>
 
                             <div class="divider"></div>
-                            <p id="reference" class="reference">João 3:16</p>
+                            <p id="reference" class="reference">${verse.reference}</p>
 
-                            <button id="newVerse" class="new-verse-btn" type="button">
-                                <svg
-                                    class="btn-icon"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <path d="M21 12a9 9 0 1 1-2.64-6.36" />
-                                    <path d="M21 3v6h-6" />
-                                </svg>
-                                Novo versículo
-                            </button>
+                            <p class="date">${formattedDate}</p>
                         </div>
                     </div>
-
-                    <script>
-                        const vscode = acquireVsCodeApi();
-
-                        const button = document.getElementById('newVerse');
-
-                        button.addEventListener('click', () => {
-                            vscode.postMessage({
-                                command: 'newVerse',
-                            });
-                        });
-
-                        window.addEventListener('message', (event) => {
-                            const message = event.data;
-
-                            if (message.command === 'updateVerse') {
-                                document.getElementById('verse').textContent = message.verse.text;
-
-                                document.getElementById('reference').textContent = message.verse.reference;
-                            }
-                        });
-                    </script>
                 </body>
             </html>
         `;

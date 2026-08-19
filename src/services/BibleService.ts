@@ -19,4 +19,27 @@ export class BibleService {
 
         return verses[index];
     }
+
+    getDailyVerse(): Verse {
+        const today = new Date();
+
+        const dateKey =
+            `${today.getFullYear()}-` + `${today.getMonth() + 1}-` + `${today.getDate()}`;
+
+        const index = this.getIndexFromDate(dateKey);
+
+        return verses[index];
+    }
+
+    private getIndexFromDate(dateKey: string): number {
+        let hash = 0;
+
+        for (let i = 0; i < dateKey.length; i++) {
+            hash = (hash << 5) - hash + dateKey.charCodeAt(i);
+
+            hash |= 0;
+        }
+
+        return Math.abs(hash) % verses.length;
+    }
 }

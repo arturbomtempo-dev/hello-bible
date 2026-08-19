@@ -11,4 +11,13 @@ describe('BibleService', () => {
         expect(verse.reference).toBeDefined();
         expect(verse.text).toBeDefined();
     });
+
+    it('should return the same verse for the same day', () => {
+        const service = new BibleService();
+
+        const first = service.getDailyVerse();
+        const second = service.getDailyVerse();
+
+        expect(first).toEqual(second);
+    });
 });
