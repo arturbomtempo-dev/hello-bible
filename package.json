@@ -14,8 +14,8 @@
     "contributes": {
         "commands": [
             {
-                "command": "hello-bible.helloWorld",
-                "title": "Hello World"
+                "command": "hello-bible.showVerse",
+                "title": "Bible: Show Verse"
             }
         ]
     },
