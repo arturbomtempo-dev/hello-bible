@@ -2,7 +2,7 @@
     "name": "hello-bible",
     "displayName": "Hello Bible",
     "description": "A simple VS Code extension that displays a daily Bible verse.",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "repository": {
         "type": "git",
         "url": "https://github.com/arturbcolen/hello-bible"
@@ -21,7 +21,25 @@
                 "command": "hello-bible.showVerse",
                 "title": "Bible: Show Verse"
             }
-        ]
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "hello-bible",
+                    "title": "Hello Bible",
+                    "icon": "media/book.svg"
+                }
+            ]
+        },
+        "views": {
+            "hello-bible": [
+                {
+                    "type": "webview",
+                    "id": "hello-bible.view",
+                    "name": "Bible"
+                }
+            ]
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
