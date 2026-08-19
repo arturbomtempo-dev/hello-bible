@@ -1,6 +1,6 @@
-import { verse } from '../models/Verse';
+import { Verse } from '../models/Verse';
 
-export const verses: verse[] = [
+export const verses: Verse[] = [
     {
         reference: 'João 3:16',
         text: 'Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.',

@@ -1,4 +1,4 @@
-export interface verse {
+export interface Verse {
     reference: string;
     text: string;
 }
