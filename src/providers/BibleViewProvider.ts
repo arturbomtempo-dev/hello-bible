@@ -1,30 +1,13 @@
 import * as vscode from 'vscode';
-
-const verses = [
-    {
-        reference: 'João 3:16',
-        text: 'Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.',
-    },
-    {
-        reference: 'Salmos 23:1',
-        text: 'O Senhor é o meu pastor; nada me faltará.',
-    },
-    {
-        reference: 'Filipenses 4:13',
-        text: 'Tudo posso naquele que me fortalece.',
-    },
-    {
-        reference: 'Jeremias 29:11',
-        text: 'Porque eu bem sei os pensamentos que penso de vós, diz o Senhor; pensamentos de paz e não de mal, para vos dar um futuro e uma esperança.',
-    },
-];
+import { BibleService } from '../services/BibleService';
 
 export class BibleViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'hello-bible.view';
 
-    private currentVerse = verses[0];
-
-    constructor(private readonly extensionUri: vscode.Uri) {}
+    constructor(
+        private readonly extensionUri: vscode.Uri,
+        private readonly bibleService: BibleService
+    ) {}
 
     resolveWebviewView(webviewView: vscode.WebviewView): void {
         webviewView.webview.options = {
@@ -35,7 +18,7 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
 
         webviewView.webview.onDidReceiveMessage((message) => {
             if (message.command === 'newVerse') {
-                const verse = this.getRandomVerse();
+                const verse = this.bibleService.getRandomVerse();
 
                 webviewView.webview.postMessage({
                     command: 'updateVerse',
@@ -352,16 +335,5 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                 </body>
             </html>
         `;
-    }
-
-    private getRandomVerse() {
-        const candidates =
-            verses.length > 1 ? verses.filter((verse) => verse !== this.currentVerse) : verses;
-
-        const index = Math.floor(Math.random() * candidates.length);
-
-        this.currentVerse = candidates[index];
-
-        return this.currentVerse;
     }
 }

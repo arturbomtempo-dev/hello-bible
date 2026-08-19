@@ -1,19 +1,18 @@
 import * as vscode from 'vscode';
-import { BibleViewProvider } from './BibleViewProvider';
-
-let panel: vscode.WebviewPanel | undefined;
+import { BibleViewProvider } from './providers/BibleViewProvider';
+import { BibleService } from './services/BibleService';
 
 export function activate(context: vscode.ExtensionContext) {
-    const provider = new BibleViewProvider(context.extensionUri);
+    const bibleService = new BibleService();
+    const provider = new BibleViewProvider(context.extensionUri, bibleService);
 
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider(BibleViewProvider.viewType, provider)
     );
 
     const showVerseCommand = vscode.commands.registerCommand('hello-bible.showVerse', () => {
-        vscode.window.showInformationMessage(
-            'João 3:16 - Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.'
-        );
+        const verse = bibleService.getRandomVerse();
+        vscode.window.showInformationMessage(`${verse.reference}: ${verse.text}`);
     });
 
     context.subscriptions.push(showVerseCommand);
