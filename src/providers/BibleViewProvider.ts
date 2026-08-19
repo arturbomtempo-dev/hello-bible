@@ -1,13 +1,15 @@
 import * as vscode from 'vscode';
 import { Verse } from '../models/Verse';
 import { BibleService } from '../services/BibleService';
+import { FavoriteService } from '../services/FavoriteService';
 
 export class BibleViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'hello-bible.view';
 
     constructor(
         private readonly extensionUri: vscode.Uri,
-        private readonly bibleService: BibleService
+        private readonly bibleService: BibleService,
+        private readonly favoriteService: FavoriteService
     ) {}
 
     resolveWebviewView(webviewView: vscode.WebviewView): void {
@@ -17,10 +19,27 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
             enableScripts: true,
         };
 
-        webviewView.webview.html = this.getHtmlContent(verse);
+        const render = () => {
+            const isFavorite = this.favoriteService.isFavorite(verse);
+            webviewView.webview.html = this.getHtmlContent(verse, isFavorite);
+        };
+
+        render();
+
+        webviewView.webview.onDidReceiveMessage((message) => {
+            if (message.command === 'toggleFavorite') {
+                const verse = this.bibleService.getDailyVerse();
+                const isFavorite = this.favoriteService.toggleFavorite(verse);
+
+                webviewView.webview.postMessage({
+                    command: 'favoriteUpdated',
+                    isFavorite,
+                });
+            }
+        });
     }
 
-    private getHtmlContent(verse: Verse): string {
+    private getHtmlContent(verse: Verse, isFavorite: boolean): string {
         const today = new Date();
         const formattedDate = today.toLocaleDateString('pt-BR');
 
@@ -198,16 +217,16 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                             text-align: right;
                         }
 
-                        .new-verse-btn {
+                        .ghost-btn {
                             display: inline-flex;
                             align-items: center;
-                            gap: 8px;
-                            margin-top: var(--space-lg);
-                            padding: 10px 22px;
+                            gap: 6px;
+                            margin-top: var(--space-md);
+                            padding: 6px 14px;
                             font-family: var(--font-sans);
-                            font-size: 12px;
+                            font-size: 11px;
                             font-weight: 600;
-                            letter-spacing: 0.06em;
+                            letter-spacing: 0.05em;
                             text-transform: uppercase;
                             color: var(--accent);
                             background: transparent;
@@ -220,23 +239,28 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                                 transform 0.1s ease;
                         }
 
-                        .new-verse-btn .btn-icon {
+                        .ghost-btn .btn-icon {
                             width: 14px;
                             height: 14px;
                         }
 
-                        .new-verse-btn:hover {
+                        .ghost-btn:hover {
                             background: var(--accent-soft);
                             border-color: var(--accent);
                         }
 
-                        .new-verse-btn:active {
+                        .ghost-btn:active {
                             transform: scale(0.96);
                         }
 
-                        .new-verse-btn:focus-visible {
+                        .ghost-btn:focus-visible {
                             outline: 2px solid var(--vscode-focusBorder, var(--accent));
                             outline-offset: 2px;
+                        }
+
+                        .ghost-btn.is-active {
+                            background: var(--accent-soft);
+                            border-color: var(--accent);
                         }
 
                         @keyframes rise {
@@ -297,9 +321,38 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                             <div class="divider"></div>
                             <p id="reference" class="reference">${verse.reference}</p>
 
+                            <button
+                                id="favoriteButton"
+                                class="ghost-btn${isFavorite ? ' is-active' : ''}"
+                                type="button"
+                            >
+                                ${isFavorite ? '★ Favoritado' : '☆ Adicionar aos favoritos'}
+                            </button>
+
                             <p class="date">${formattedDate}</p>
                         </div>
                     </div>
+
+                    <script>
+                        const vscode = acquireVsCodeApi();
+                        const favoriteButton = document.getElementById('favoriteButton');
+
+                        favoriteButton.addEventListener('click', () => {
+                            vscode.postMessage({ command: 'toggleFavorite' });
+                        });
+
+                        window.addEventListener('message', (event) => {
+                            const message = event.data;
+
+                            if (message.command === 'favoriteUpdated') {
+                                favoriteButton.textContent = message.isFavorite
+                                    ? '★ Favoritado'
+                                    : '☆ Adicionar aos favoritos';
+
+                                favoriteButton.classList.toggle('is-active', message.isFavorite);
+                            }
+                        });
+                    </script>
                 </body>
             </html>
         `;
