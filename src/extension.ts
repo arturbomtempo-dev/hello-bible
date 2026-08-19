@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log('Congratulations, your extension "hello-vscode" is now active!');
+    console.log('Congratulations, your extension "hello-bible" is now active!');
 
-    const disposable = vscode.commands.registerCommand('hello-vscode.helloWorld', () => {
-        vscode.window.showInformationMessage('Hello World from Hello VS Code!');
+    const disposable = vscode.commands.registerCommand('hello-bible.helloWorld', () => {
+        vscode.window.showInformationMessage('Hello World from Hello Bible!');
     });
 
     context.subscriptions.push(disposable);

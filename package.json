@@ -1,7 +1,7 @@
 {
-    "name": "hello-vscode",
-    "displayName": "Hello VS Code",
-    "description": "A simple VS Code extension for learning extension development.",
+    "name": "hello-bible",
+    "displayName": "Hello Bible",
+    "description": "A simple VS Code extension that displays a daily Bible verse.",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.125.0"
@@ -14,7 +14,7 @@
     "contributes": {
         "commands": [
             {
-                "command": "hello-vscode.helloWorld",
+                "command": "hello-bible.helloWorld",
                 "title": "Hello World"
             }
         ]
