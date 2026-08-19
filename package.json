@@ -48,7 +48,7 @@
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src",
-        "test": "vscode-test",
+        "test": "vitest",
         "format": "prettier --write ."
     },
     "devDependencies": {
@@ -60,7 +60,8 @@
         "eslint": "^10.5.0",
         "prettier": "^3.9.6",
         "typescript": "^6.0.3",
-        "typescript-eslint": "^8.61.1"
+        "typescript-eslint": "^8.61.1",
+        "vitest": "^4.1.11"
     },
     "overrides": {
         "diff": "^8.0.4",
