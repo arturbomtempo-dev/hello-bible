@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 
+let panel: vscode.WebviewPanel | undefined;
+
 export function activate(context: vscode.ExtensionContext) {
     const showVerseCommand = vscode.commands.registerCommand('hello-bible.showVerse', () => {
         showVerse();
@@ -9,7 +11,12 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function showVerse() {
-    const panel = vscode.window.createWebviewPanel(
+    if (panel) {
+        panel.reveal(vscode.ViewColumn.One);
+        return;
+    }
+
+    panel = vscode.window.createWebviewPanel(
         'helloBible',
         'Hello Bible',
         vscode.ViewColumn.One,
@@ -17,6 +24,10 @@ function showVerse() {
     );
 
     panel.webview.html = getWebviewContent();
+
+    panel.onDidDispose(() => {
+        panel = undefined;
+    });
 }
 
 function getWebviewContent(): string {
@@ -30,28 +41,37 @@ function getWebviewContent(): string {
 
                 <style>
                     :root {
-                        --bg: #0e0f14;
+                        --bg: var(--vscode-editor-background, #1e1e1e);
+                        --card-bg: var(--vscode-editorWidget-background, #252526);
+                        --border: var(
+                            --vscode-widget-border,
+                            var(--vscode-panel-border, rgba(128, 128, 128, 0.35))
+                        );
+                        --shadow: var(--vscode-widget-shadow, rgba(0, 0, 0, 0.36));
+
+                        --text-primary: var(--vscode-editor-foreground, var(--vscode-foreground, #cccccc));
+                        --text-secondary: var(--vscode-descriptionForeground, #9d9d9d);
+                        --text-muted: var(--vscode-disabledForeground, #6b6b6b);
+
+                        --accent: var(--vscode-textLink-foreground, #d9b26b);
+                        --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+                        --accent-line: color-mix(in srgb, var(--accent) 35%, transparent);
                         --bg-glow: radial-gradient(
                             circle at 50% 0%,
-                            rgba(122, 143, 255, 0.08),
+                            color-mix(in srgb, var(--accent) 8%, transparent),
                             transparent 55%
                         );
-                        --card-bg: linear-gradient(180deg, #171925 0%, #14151e 100%);
-                        --border: rgba(255, 255, 255, 0.07);
-                        --border-strong: rgba(217, 178, 107, 0.25);
-
-                        --text-primary: #ece9f7;
-                        --text-secondary: #8f8ca3;
-                        --text-muted: #605d72;
-
-                        --accent: #d9b26b;
-                        --accent-soft: rgba(217, 178, 107, 0.14);
-                        --accent-line: rgba(217, 178, 107, 0.35);
-                        --accent-secondary: #7c8fff;
 
                         --font-serif:
                             Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
-                        --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+                        --font-sans: var(
+                            --vscode-font-family,
+                            -apple-system,
+                            BlinkMacSystemFont,
+                            'Segoe UI',
+                            system-ui,
+                            sans-serif
+                        );
 
                         --space-xs: 8px;
                         --space-sm: 14px;
@@ -95,9 +115,7 @@ function getWebviewContent(): string {
                         border-radius: var(--radius);
                         padding: var(--space-xl) var(--space-lg);
                         text-align: center;
-                        box-shadow:
-                            0 24px 60px -20px rgba(0, 0, 0, 0.55),
-                            0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+                        box-shadow: 0 24px 60px -20px var(--shadow);
                         animation: rise 0.5s ease-out;
                     }
 
@@ -109,7 +127,11 @@ function getWebviewContent(): string {
                         transform: translateX(-50%);
                         width: 120px;
                         height: 1px;
-                        background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+                        background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
+                    }
+
+                    body.vscode-high-contrast .card {
+                        border-color: var(--vscode-contrastBorder, var(--border));
                     }
 
                     .icon {
