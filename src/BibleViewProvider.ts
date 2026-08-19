@@ -1,5 +1,24 @@
 import * as vscode from 'vscode';
 
+const verses = [
+    {
+        reference: 'João 3:16',
+        text: 'Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.',
+    },
+    {
+        reference: 'Salmos 23:1',
+        text: 'O Senhor é o meu pastor; nada me faltará.',
+    },
+    {
+        reference: 'Filipenses 4:13',
+        text: 'Tudo posso naquele que me fortalece.',
+    },
+    {
+        reference: 'Jeremias 29:11',
+        text: 'Porque eu bem sei os pensamentos que penso de vós, diz o Senhor; pensamentos de paz e não de mal, para vos dar um futuro e uma esperança.',
+    },
+];
+
 export class BibleViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'hello-bible.view';
 
@@ -11,6 +30,17 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
         };
 
         webviewView.webview.html = this.getHtmlContent();
+
+        webviewView.webview.onDidReceiveMessage((message) => {
+            if (message.command === 'newVerse') {
+                const verse = this.getRandomVerse();
+
+                webviewView.webview.postMessage({
+                    command: 'updateVerse',
+                    verse,
+                });
+            }
+        });
     }
 
     private getHtmlContent(): string {
@@ -178,6 +208,47 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                             margin: 0;
                         }
 
+                        .new-verse-btn {
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 8px;
+                            margin-top: var(--space-lg);
+                            padding: 10px 22px;
+                            font-family: var(--font-sans);
+                            font-size: 12px;
+                            font-weight: 600;
+                            letter-spacing: 0.06em;
+                            text-transform: uppercase;
+                            color: var(--accent);
+                            background: transparent;
+                            border: 1px solid var(--accent-line);
+                            border-radius: 999px;
+                            cursor: pointer;
+                            transition:
+                                background-color 0.15s ease,
+                                border-color 0.15s ease,
+                                transform 0.1s ease;
+                        }
+
+                        .new-verse-btn .btn-icon {
+                            width: 14px;
+                            height: 14px;
+                        }
+
+                        .new-verse-btn:hover {
+                            background: var(--accent-soft);
+                            border-color: var(--accent);
+                        }
+
+                        .new-verse-btn:active {
+                            transform: scale(0.96);
+                        }
+
+                        .new-verse-btn:focus-visible {
+                            outline: 2px solid var(--vscode-focusBorder, var(--accent));
+                            outline-offset: 2px;
+                        }
+
                         @keyframes rise {
                             from {
                                 opacity: 0;
@@ -228,18 +299,62 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
 
                             <div class="verse-wrap">
                                 <span class="quote-mark">&ldquo;</span>
-                                <p class="verse">
+                                <p id="verse" class="verse">
                                     Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para
                                     que todo aquele que nele crê não pereça, mas tenha a vida eterna.
                                 </p>
                             </div>
 
                             <div class="divider"></div>
-                            <p class="reference">João 3:16</p>
+                            <p id="reference" class="reference">João 3:16</p>
+
+                            <button id="newVerse" class="new-verse-btn" type="button">
+                                <svg
+                                    class="btn-icon"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+                                    <path d="M21 3v6h-6" />
+                                </svg>
+                                Novo versículo
+                            </button>
                         </div>
                     </div>
+
+                    <script>
+                        const vscode = acquireVsCodeApi();
+
+                        const button = document.getElementById('newVerse');
+
+                        button.addEventListener('click', () => {
+                            vscode.postMessage({
+                                command: 'newVerse',
+                            });
+                        });
+
+                        window.addEventListener('message', (event) => {
+                            const message = event.data;
+
+                            if (message.command === 'updateVerse') {
+                                document.getElementById('verse').textContent = message.verse.text;
+
+                                document.getElementById('reference').textContent = message.verse.reference;
+                            }
+                        });
+                    </script>
                 </body>
             </html>
         `;
+    }
+
+    private getRandomVerse() {
+        const index = Math.floor(Math.random() * verses.length);
+
+        return verses[index];
     }
 }
