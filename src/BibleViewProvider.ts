@@ -22,6 +22,8 @@ const verses = [
 export class BibleViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'hello-bible.view';
 
+    private currentVerse = verses[0];
+
     constructor(private readonly extensionUri: vscode.Uri) {}
 
     resolveWebviewView(webviewView: vscode.WebviewView): void {
@@ -353,8 +355,13 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
     }
 
     private getRandomVerse() {
-        const index = Math.floor(Math.random() * verses.length);
+        const candidates =
+            verses.length > 1 ? verses.filter((verse) => verse !== this.currentVerse) : verses;
 
-        return verses[index];
+        const index = Math.floor(Math.random() * candidates.length);
+
+        this.currentVerse = candidates[index];
+
+        return this.currentVerse;
     }
 }
