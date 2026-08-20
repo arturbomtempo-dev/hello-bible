@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-08-20
+
+### Fixed
+
+- Replaced the README's VS Code Marketplace badges, which shields.io had stopped supporting, with working equivalents.
+
 ## [1.0.1] - 2026-08-20
 
 ### Fixed
@@ -26,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Loading and error states, with retry, for the daily verse card when the Bible API is unreachable.
 - Extension icon for the VS Code Marketplace.
 
-[unreleased]: https://github.com/arturbomtempo-dev/hello-bible/compare/v1.0.1...HEAD
+[unreleased]: https://github.com/arturbomtempo-dev/hello-bible/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/arturbomtempo-dev/hello-bible/releases/tag/v1.0.2
 [1.0.1]: https://github.com/arturbomtempo-dev/hello-bible/releases/tag/v1.0.1
 [1.0.0]: https://github.com/arturbomtempo-dev/hello-bible/releases/tag/v1.0.0
