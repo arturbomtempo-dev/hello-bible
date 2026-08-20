@@ -26,7 +26,7 @@
             "activitybar": [
                 {
                     "id": "hello-bible-favorites",
-                    "title": "Favoritos",
+                    "title": "Favoritos - Hello Bible",
                     "icon": "media/book.svg"
                 }
             ]
@@ -45,7 +45,7 @@
                 {
                     "type": "webview",
                     "id": "hello-bible.favoritesView",
-                    "name": "Favoritos",
+                    "name": "Favoritos - Hello Bible",
                     "icon": "media/book.svg"
                 }
             ]
