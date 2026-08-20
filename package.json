@@ -20,13 +20,17 @@
             {
                 "command": "hello-bible.showVerse",
                 "title": "Bible: Show Verse"
-            },
-            {
-                "command": "hello-bible.showFavorites",
-                "title": "Bible: Show Favorite Verses",
-                "icon": "media/book.svg"
             }
         ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "hello-bible-favorites",
+                    "title": "Favoritos",
+                    "icon": "media/book.svg"
+                }
+            ]
+        },
         "views": {
             "explorer": [
                 {
@@ -36,14 +40,13 @@
                     "icon": "media/book.svg",
                     "visibility": "collapsed"
                 }
-            ]
-        },
-        "menus": {
-            "view/title": [
+            ],
+            "hello-bible-favorites": [
                 {
-                    "command": "hello-bible.showFavorites",
-                    "when": "view == hello-bible.view",
-                    "group": "navigation"
+                    "type": "webview",
+                    "id": "hello-bible.favoritesView",
+                    "name": "Favoritos",
+                    "icon": "media/book.svg"
                 }
             ]
         }

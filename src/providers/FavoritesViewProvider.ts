@@ -1,70 +1,39 @@
 import * as vscode from 'vscode';
 import { FavoriteVerse } from '../models/Verse';
 import { FavoriteService } from '../services/FavoriteService';
-import { getGhostButtonStyles, getThemeTokens } from '../webview/theme';
+import { getCompactSpacingTokens, getGhostButtonStyles, getThemeTokens } from '../webview/theme';
 
-export class FavoritesPanel {
-    public static readonly viewType = 'hello-bible.favorites';
-    private static currentPanel: FavoritesPanel | undefined;
+export class FavoritesViewProvider implements vscode.WebviewViewProvider {
+    public static readonly viewType = 'hello-bible.favoritesView';
 
-    private readonly disposables: vscode.Disposable[] = [];
+    constructor(private readonly favoriteService: FavoriteService) {}
 
-    static show(favoriteService: FavoriteService): void {
-        const column = vscode.window.activeTextEditor?.viewColumn;
+    resolveWebviewView(webviewView: vscode.WebviewView): void {
+        webviewView.webview.options = {
+            enableScripts: true,
+        };
 
-        if (FavoritesPanel.currentPanel) {
-            FavoritesPanel.currentPanel.panel.reveal(column);
-            return;
-        }
+        const render = () => {
+            webviewView.webview.html = this.getHtmlContent(this.favoriteService.getFavorites());
+        };
 
-        const panel = vscode.window.createWebviewPanel(
-            FavoritesPanel.viewType,
-            'Versículos Favoritos',
-            column ?? vscode.ViewColumn.One,
-            { enableScripts: true }
-        );
+        render();
 
-        FavoritesPanel.currentPanel = new FavoritesPanel(panel, favoriteService);
-    }
+        const changeSubscription = this.favoriteService.onDidChangeFavorites(render);
 
-    private constructor(
-        private readonly panel: vscode.WebviewPanel,
-        private readonly favoriteService: FavoriteService
-    ) {
-        this.render();
+        webviewView.onDidDispose(() => changeSubscription.dispose());
 
-        this.panel.webview.onDidReceiveMessage(
-            (message) => {
-                if (message.command === 'removeFavorite' && typeof message.reference === 'string') {
-                    this.favoriteService.removeFavorite(message.reference);
-                }
-            },
-            null,
-            this.disposables
-        );
-
-        this.favoriteService.onDidChangeFavorites(() => this.render(), null, this.disposables);
-
-        this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
-    }
-
-    private render(): void {
-        this.panel.webview.html = this.getHtmlContent(this.favoriteService.getFavorites());
-    }
-
-    private dispose(): void {
-        FavoritesPanel.currentPanel = undefined;
-
-        while (this.disposables.length) {
-            this.disposables.pop()?.dispose();
-        }
+        webviewView.webview.onDidReceiveMessage((message) => {
+            if (message.command === 'removeFavorite' && typeof message.reference === 'string') {
+                this.favoriteService.removeFavorite(message.reference);
+            }
+        });
     }
 
     private getHtmlContent(favorites: FavoriteVerse[]): string {
         const sorted = [...favorites].sort((a, b) => b.favoritedAt.localeCompare(a.favoritedAt));
 
-        const body =
-            sorted.length === 0 ? this.getEmptyStateHtml() : this.getFavoritesGridHtml(sorted);
+        const body = sorted.length === 0 ? this.getEmptyStateHtml() : this.getListHtml(sorted);
 
         return `
             <!doctype html>
@@ -72,87 +41,82 @@ export class FavoritesPanel {
                 <head>
                     <meta charset="UTF-8" />
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                    <title>Versículos Favoritos</title>
+                    <title>Favoritos</title>
 
                     <style>
                         :root {
                             ${getThemeTokens()}
-
-                            --space-xs: 8px;
-                            --space-sm: 14px;
-                            --space-md: 24px;
-                            --space-lg: 40px;
-                            --space-xl: 56px;
-
-                            --radius: 14px;
+                            ${getCompactSpacingTokens()}
                         }
 
                         * {
                             box-sizing: border-box;
                         }
 
-                        html,
-                        body {
+                        html {
                             min-height: 100%;
                         }
 
                         body {
                             margin: 0;
+                            min-height: 100%;
                             font-family: var(--font-sans);
+                            font-size: 12px;
                             background-color: var(--bg);
                             background-image: var(--bg-glow);
                             color: var(--text-primary);
-                            padding: var(--space-xl) var(--space-lg) var(--space-lg);
+                            padding: var(--space-md) var(--space-sm);
                         }
 
-                        .page {
-                            max-width: 980px;
+                        .container {
+                            width: 100%;
+                            max-width: 320px;
                             margin: 0 auto;
                         }
 
-                        .page-header {
-                            text-align: center;
-                            margin-bottom: var(--space-xl);
+                        .header {
+                            display: flex;
+                            align-items: center;
+                            gap: var(--space-xs);
+                            margin-bottom: var(--space-md);
                         }
 
-                        .page-header .icon {
-                            width: 30px;
-                            height: 30px;
-                            margin: 0 auto var(--space-sm);
-                            color: var(--accent);
-                            opacity: 0.9;
-                        }
-
-                        .page-header h1 {
+                        .badge {
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            min-width: 16px;
+                            padding: 1px 6px;
                             font-family: var(--font-sans);
-                            font-size: 18px;
+                            font-size: 10px;
+                            font-weight: 700;
+                            border-radius: 999px;
+                            background: var(--vscode-badge-background, var(--accent-soft));
+                            color: var(--vscode-badge-foreground, var(--accent));
+                        }
+
+                        .header-label {
+                            font-family: var(--font-sans);
+                            font-size: 9px;
                             font-weight: 600;
-                            margin: 0 0 6px;
-                        }
-
-                        .page-header p {
-                            font-family: var(--font-sans);
-                            font-size: 13px;
+                            letter-spacing: 0.12em;
+                            text-transform: uppercase;
                             color: var(--text-secondary);
-                            margin: 0;
                         }
 
-                        .grid {
-                            display: grid;
-                            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-                            gap: var(--space-md);
-                            animation: rise 0.4s ease-out;
+                        .list {
+                            display: flex;
+                            flex-direction: column;
+                            gap: var(--space-sm);
                         }
 
                         .favorite-card {
                             position: relative;
-                            display: flex;
-                            flex-direction: column;
                             background: var(--card-bg);
                             border: 1px solid var(--border);
                             border-radius: var(--radius);
-                            padding: var(--space-md);
-                            box-shadow: 0 10px 24px -16px var(--shadow);
+                            padding: var(--space-md) var(--space-sm);
+                            animation: rise 0.3s ease-out;
                         }
 
                         body.vscode-high-contrast .favorite-card {
@@ -162,7 +126,7 @@ export class FavoritesPanel {
                         .favorite-card .quote-mark {
                             display: block;
                             font-family: var(--font-serif);
-                            font-size: 30px;
+                            font-size: 18px;
                             line-height: 1;
                             color: var(--accent-soft);
                             margin-bottom: -0.2em;
@@ -172,53 +136,46 @@ export class FavoritesPanel {
                         .favorite-card .verse {
                             font-family: var(--font-serif);
                             font-style: italic;
-                            font-size: 15px;
-                            line-height: 1.55;
+                            font-size: 12px;
+                            line-height: 1.5;
                             color: var(--text-primary);
-                            margin: 0 0 var(--space-md);
-                            flex: 1;
-                        }
-
-                        .favorite-card .meta {
-                            margin-bottom: var(--space-sm);
+                            margin: 0 0 var(--space-sm);
                         }
 
                         .favorite-card .reference {
                             font-family: var(--font-sans);
-                            font-size: 12px;
+                            font-size: 10px;
                             font-weight: 600;
                             letter-spacing: 0.06em;
                             text-transform: uppercase;
                             color: var(--accent);
-                            margin: 0 0 4px;
+                            margin: 0 0 2px;
                         }
 
                         .favorite-card .favorited-at {
                             font-family: var(--font-sans);
-                            font-size: 11px;
+                            font-size: 9px;
                             color: var(--text-muted);
-                            margin: 0;
-                        }
-
-                        .favorite-card .ghost-btn {
-                            align-self: flex-start;
+                            margin: 0 0 var(--space-sm);
                         }
 
                         ${getGhostButtonStyles()}
+
+                        .favorite-card .ghost-btn {
+                            padding: 3px 10px;
+                            font-size: 9px;
+                        }
 
                         .empty-state {
                             display: flex;
                             flex-direction: column;
                             align-items: center;
                             text-align: center;
-                            max-width: 360px;
-                            margin: var(--space-xl) auto 0;
-                            padding: var(--space-xl) var(--space-lg);
+                            padding: var(--space-lg) var(--space-md);
                             background: var(--card-bg);
                             border: 1px solid var(--border);
                             border-radius: var(--radius);
-                            box-shadow: 0 10px 24px -16px var(--shadow);
-                            animation: rise 0.4s ease-out;
+                            animation: rise 0.3s ease-out;
                         }
 
                         body.vscode-high-contrast .empty-state {
@@ -226,24 +183,24 @@ export class FavoritesPanel {
                         }
 
                         .empty-state .icon {
-                            width: 30px;
-                            height: 30px;
-                            margin-bottom: var(--space-sm);
+                            width: clamp(16px, 6vw, 20px);
+                            height: clamp(16px, 6vw, 20px);
+                            margin: 0 auto var(--space-xs);
                             color: var(--accent);
                             opacity: 0.9;
                         }
 
                         .empty-state h2 {
                             font-family: var(--font-sans);
-                            font-size: 14px;
+                            font-size: 11px;
                             font-weight: 600;
                             margin: 0 0 var(--space-xs);
                         }
 
                         .empty-state p {
                             font-family: var(--font-sans);
-                            font-size: 13px;
-                            line-height: 1.6;
+                            font-size: 10.5px;
+                            line-height: 1.55;
                             color: var(--text-secondary);
                             margin: 0;
                         }
@@ -256,7 +213,7 @@ export class FavoritesPanel {
                         @keyframes rise {
                             from {
                                 opacity: 0;
-                                transform: translateY(10px);
+                                transform: translateY(6px);
                             }
                             to {
                                 opacity: 1;
@@ -265,7 +222,7 @@ export class FavoritesPanel {
                         }
 
                         @media (prefers-reduced-motion: reduce) {
-                            .grid,
+                            .favorite-card,
                             .empty-state {
                                 animation: none;
                             }
@@ -274,28 +231,7 @@ export class FavoritesPanel {
                 </head>
 
                 <body>
-                    <div class="page">
-                        <div class="page-header">
-                            <svg
-                                class="icon"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.4"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    d="M12 6.5c-1.6-1.4-4-2-6.5-2-.6 0-1 .43-1 1v11.5c0 .55.44 1 1 1 2.3 0 4.6.5 6.5 1.8 1.9-1.3 4.2-1.8 6.5-1.8.56 0 1-.45 1-1V5.5c0-.57-.44-1-1-1-2.5 0-4.9.6-6.5 2Z"
-                                />
-                                <path d="M12 6.5v13" />
-                            </svg>
-                            <h1>Versículos Favoritos</h1>
-                            <p>Sua coleção pessoal de passagens guardadas para ler novamente.</p>
-                        </div>
-
-                        ${body}
-                    </div>
+                    <div class="container">${body}</div>
 
                     <script>
                         const vscode = acquireVsCodeApi();
@@ -331,15 +267,14 @@ export class FavoritesPanel {
                 <h2>Nenhum favorito ainda</h2>
                 <p>
                     Os versículos que você favoritar vão aparecer aqui. Toque em
-                    <strong>☆ Adicionar aos favoritos</strong> no versículo do dia para começar sua
-                    coleção.
+                    <strong>☆ Adicionar aos favoritos</strong> no versículo do dia para começar.
                 </p>
             </div>
         `;
     }
 
-    private getFavoritesGridHtml(favorites: FavoriteVerse[]): string {
-        const cards = favorites
+    private getListHtml(favorites: FavoriteVerse[]): string {
+        const items = favorites
             .map((favorite) => {
                 const favoritedAt = new Date(favorite.favoritedAt).toLocaleDateString('pt-BR');
 
@@ -347,22 +282,26 @@ export class FavoritesPanel {
                     <div class="favorite-card">
                         <span class="quote-mark">&ldquo;</span>
                         <p class="verse">${favorite.text}</p>
-                        <div class="meta">
-                            <p class="reference">${favorite.reference}</p>
-                            <p class="favorited-at">Favoritado em ${favoritedAt}</p>
-                        </div>
+                        <p class="reference">${favorite.reference}</p>
+                        <p class="favorited-at">Favoritado em ${favoritedAt}</p>
                         <button
                             class="ghost-btn is-active"
                             type="button"
                             data-remove-reference="${favorite.reference}"
                         >
-                            ★ Remover dos favoritos
+                            ✕ Remover
                         </button>
                     </div>
                 `;
             })
             .join('');
 
-        return `<div class="grid">${cards}</div>`;
+        return `
+            <div class="header">
+                <span class="badge">${favorites.length}</span>
+                <span class="header-label">Favoritos</span>
+            </div>
+            <div class="list">${items}</div>
+        `;
     }
 }

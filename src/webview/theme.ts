@@ -34,6 +34,18 @@ export function getThemeTokens(): string {
     `;
 }
 
+export function getCompactSpacingTokens(): string {
+    return `
+        --space-xs: clamp(4px, 1.5vw, 6px);
+        --space-sm: clamp(6px, 2.5vw, 10px);
+        --space-md: clamp(8px, 3.5vw, 14px);
+        --space-lg: clamp(12px, 5vw, 20px);
+        --space-xl: clamp(16px, 6.5vw, 26px);
+
+        --radius: 10px;
+    `;
+}
+
 export function getGhostButtonStyles(): string {
     return `
         .ghost-btn {
