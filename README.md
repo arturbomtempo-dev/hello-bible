@@ -1,54 +1,104 @@
-# Hello Bible
+<p align="center">
+  <img src="media/icon.png" width="120" height="120" alt="Hello Bible icon" />
+</p>
 
-A minimal Visual Studio Code extension that brings a Bible verse into your editor, one command away.
+<h1 align="center">Hello Bible</h1>
 
-Hello Bible was built as a hands-on study of the VS Code Extension API, covering command registration, the extension activation lifecycle, and the notification UI, while producing something small, pleasant, and genuinely usable in a daily coding routine.
+<p align="center">
+  A quiet, native-feeling companion for reading and keeping a Bible verse without ever leaving VS Code.
+</p>
+
+<p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=arturbomtempo-dev.hello-bible"><img src="https://img.shields.io/visual-studio-marketplace/v/arturbomtempo-dev.hello-bible?label=VS%20Code%20Marketplace&color=blue" alt="VS Code Marketplace Version" /></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=arturbomtempo-dev.hello-bible"><img src="https://img.shields.io/visual-studio-marketplace/i/arturbomtempo-dev.hello-bible?label=Installs" alt="Installs" /></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=arturbomtempo-dev.hello-bible"><img src="https://img.shields.io/visual-studio-marketplace/r/arturbomtempo-dev.hello-bible?label=Rating" alt="Rating" /></a>
+  <a href="https://github.com/arturbomtempo-dev/hello-bible/stargazers"><img src="https://img.shields.io/github/stars/arturbomtempo-dev/hello-bible?label=Stars" alt="GitHub Stars" /></a>
+  <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT" /></a>
+</p>
+
+---
+
+## Why Hello Bible exists
+
+Hello Bible was built as a hands-on exploration of the VS Code Extension API: webview views, view containers, `QuickPick`, event-driven state, all in service of producing something genuinely nice to have open every day. A small, contemplative space inside the editor, next to the file tree, that surfaces an encouraging verse without asking for any attention beyond a glance.
 
 ## Features
 
-- **Show a verse on demand.** Run the `Bible: Show Verse` command from the Command Palette and the verse is displayed in an information notification, without leaving your current file.
-- **Zero friction.** No configuration, no account required. The verse text is fetched live from a free, public Bible API — no API key needed.
-- **Stays out of your way.** The extension contributes a single command and does nothing until you invoke it.
+### Daily verse, right in the Explorer
 
-### Usage
+A collapsible **Hello Bible** section sits at the bottom of the Explorer sidebar, alongside your file tree. It shows one verse per day: reference, text, and today's date, picked deterministically from a curated pool based on the calendar date. The pick resets exactly at midnight **in your own computer's local timezone**, not UTC, so the "today" you see always matches the today on your clock.
 
-1. Open the Command Palette with `Ctrl+Shift+P` (Windows and Linux) or `Cmd+Shift+P` (macOS).
-2. Type **Bible: Show Verse** and press `Enter`.
-3. The verse appears as a notification in the lower-right corner of the window.
+### Favorite the verses that matter to you
 
-The current release ships with a single verse, John 3:16, in Brazilian Portuguese.
+A single tap on **☆ Adicionar aos favoritos** saves the current verse; tap again to remove it. Favoriting is instant and syncs live between every screen of the extension, no reload required.
+
+### A dedicated home for your favorites
+
+An icon in the Activity Bar opens a panel listing every verse you've favorited, each with its reference, full text, and the date you favorited it, plus a one-click button to remove it. First time here with nothing saved yet? You get a friendly empty state instead of a blank panel.
+
+### Make it yours
+
+A gear icon in the "Hello Bible" section's title bar opens a picker with 8 curated accent colors, or "Padrão", which simply follows your editor theme's own link color. Whichever you choose drives the icon, divider, reference text, border, and background glow across **both** screens at once, live.
+
+### One glance from anywhere
+
+Run **Bible: Show Verse** from the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) to see today's verse as a native notification, without opening the sidebar at all.
+
+### Verses that are never hardcoded
+
+Every verse's text is fetched live, in Portuguese, from a free public Bible API, never bundled or baked into the extension. The reference pool itself is a curated list of around 50 well-known, encouraging passages spanning both testaments, chosen specifically to keep the daily read motivational rather than random.
+
+### Looks native in your theme
+
+Every color in both webviews derives from VS Code's own theme variables, with sensible fallbacks, so Hello Bible looks at home in light, dark, high-contrast, and custom themes alike, with zero configuration.
+
+## Built with
+
+- **[TypeScript](https://www.typescriptlang.org/)**: the entire extension, strict mode on.
+- **[VS Code Extension API](https://code.visualstudio.com/api)**: `WebviewView`, view containers, `QuickPick`, `EventEmitter`-driven reactivity.
+- **[bible-api.com](https://bible-api.com)**: free, public, no API key, used for live verse text in the Portuguese Almeida translation.
+- **[Vitest](https://vitest.dev/)**: unit tests for the service layer.
+- **[ESLint](https://eslint.org/) + [typescript-eslint](https://typescript-eslint.io/)**: linting.
+- **[Prettier](https://prettier.io/)**: formatting.
+
+## Architecture
+
+The codebase is organized by responsibility, so each layer can change independently:
+
+```
+src/
+├── commands/    → Command Palette / QuickPick handlers
+├── data/        → static curated data (verse references, accent colors)
+├── models/      → shared TypeScript types
+├── providers/   → VS Code webview controllers (wiring only, no HTML)
+├── services/    → business logic and persisted state (favorites, accent color, verse fetching)
+├── utils/       → small shared utilities (a dependency-free event emitter)
+└── webview/     → pure functions that render HTML/CSS (no VS Code API in sight)
+```
+
+Providers never build HTML themselves; they call into `webview/`, which returns plain strings and knows nothing about VS Code. Services never touch the DOM. This keeps each layer testable and easy to reason about in isolation.
 
 ## Requirements
 
-An internet connection, to fetch the verse text from [bible-api.com](https://bible-api.com) (free, public, no API key). Otherwise, Hello Bible has no runtime dependencies and requires only Visual Studio Code version 1.125.0 or later.
+- Visual Studio Code `^1.125.0`.
+- An internet connection, to fetch verse text from [bible-api.com](https://bible-api.com).
 
 ## Extension Settings
 
-This extension does not contribute any settings yet. Configuration options such as choosing a translation or enabling a verse at startup are planned for a future release.
+Hello Bible doesn't add anything to `settings.json`. Personalization (the accent color) is handled through the **Bible: Select Accent Color** command instead, reachable from the gear icon in the Explorer section's title bar.
 
 ## Known Issues
 
-- The verse is currently hardcoded, so every invocation shows the same passage.
-- Only one translation and language (Brazilian Portuguese) is available.
-- Long verses may be truncated by the VS Code notification area, which is expected behavior for information messages.
-
-If you run into something else, please open an issue.
+- Only one translation is available today (Portuguese, João Ferreira de Almeida).
+- No offline caching: a verse can't be displayed without an internet connection.
+- The curated reference pool (~50 verses) will keep growing in future releases.
 
 ## Roadmap
 
-- A rotating or random verse per invocation.
-- A daily verse shown automatically on startup, behind an opt-in setting.
-- Support for multiple translations and languages.
-- Insert the selected verse directly into the active editor.
-
-## Release Notes
-
-### 0.0.1
-
-- Initial release.
-- Adds the `Bible: Show Verse` command, which displays John 3:16 in an information notification.
-
----
+- More translations and languages.
+- A larger, categorized reference pool.
+- Insert the current verse directly into the active editor.
+- An optional daily reminder/notification.
 
 ## Contributing
 
@@ -66,12 +116,26 @@ Useful scripts:
 - `npm run watch`: recompile on every change.
 - `npm run lint`: run ESLint over `src`.
 - `npm run format`: format the project with Prettier.
-- `npm test`: run the extension test suite.
+- `npm test`: run the unit test suite.
 
 ## Following extension guidelines
 
 This extension follows the official Visual Studio Code extension guidelines.
 
 - [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+
+## Author
+
+Built by **Artur Bomtempo**.
+
+- Website: [arturbomtempo.dev](https://www.arturbomtempo.dev)
+- GitHub: [@arturbomtempo-dev](https://github.com/arturbomtempo-dev)
+- LinkedIn: [in/artur-bomtempo](https://www.linkedin.com/in/artur-bomtempo/)
+- Instagram: [@arturbomtempo.dev](https://www.instagram.com/arturbomtempo.dev)
+- YouTube: [@ArturBomtempoDev](https://www.youtube.com/@ArturBomtempoDev)
+
+## License
+
+Released under the [MIT License](LICENSE.md).
 
 **Enjoy!**
