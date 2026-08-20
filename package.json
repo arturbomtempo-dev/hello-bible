@@ -22,22 +22,14 @@
                 "title": "Bible: Show Verse"
             }
         ],
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "hello-bible",
-                    "title": "Hello Bible",
-                    "icon": "media/book.svg"
-                }
-            ]
-        },
         "views": {
-            "hello-bible": [
+            "explorer": [
                 {
                     "type": "webview",
                     "id": "hello-bible.view",
                     "name": "Bible",
-                    "icon": "media/book.svg"
+                    "icon": "media/book.svg",
+                    "visibility": "collapsed"
                 }
             ]
         }

@@ -85,11 +85,11 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                                 sans-serif
                             );
 
-                            --space-xs: 8px;
-                            --space-sm: 14px;
-                            --space-md: 24px;
-                            --space-lg: 40px;
-                            --space-xl: 56px;
+                            --space-xs: clamp(6px, 2vw, 8px);
+                            --space-sm: clamp(10px, 4vw, 14px);
+                            --space-md: clamp(14px, 6vw, 24px);
+                            --space-lg: clamp(20px, 10vw, 40px);
+                            --space-xl: clamp(28px, 14vw, 56px);
 
                             --radius: 18px;
                         }
@@ -147,8 +147,8 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                         }
 
                         .icon {
-                            width: 30px;
-                            height: 30px;
+                            width: clamp(22px, 9vw, 30px);
+                            height: clamp(22px, 9vw, 30px);
                             margin: 0 auto var(--space-sm);
                             color: var(--accent);
                             opacity: 0.9;
@@ -156,7 +156,7 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
 
                         .eyebrow {
                             font-family: var(--font-sans);
-                            font-size: 11px;
+                            font-size: clamp(9px, 3vw, 11px);
                             font-weight: 600;
                             letter-spacing: 0.18em;
                             text-transform: uppercase;
@@ -172,24 +172,24 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                         .quote-mark {
                             display: block;
                             font-family: var(--font-serif);
-                            font-size: 64px;
+                            font-size: clamp(36px, 16vw, 64px);
                             line-height: 1;
                             color: var(--accent-soft);
-                            margin-bottom: -18px;
+                            margin-bottom: -0.28em;
                             user-select: none;
                         }
 
                         .verse {
                             font-family: var(--font-serif);
                             font-style: italic;
-                            font-size: 22px;
+                            font-size: clamp(15px, 6vw, 22px);
                             line-height: 1.65;
                             color: var(--text-primary);
                             margin: 0;
                         }
 
                         .divider {
-                            width: 36px;
+                            width: clamp(28px, 10vw, 36px);
                             height: 2px;
                             background: var(--accent);
                             border-radius: 2px;
@@ -199,7 +199,7 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
 
                         .reference {
                             font-family: var(--font-sans);
-                            font-size: 13px;
+                            font-size: clamp(11px, 4vw, 13px);
                             font-weight: 600;
                             letter-spacing: 0.08em;
                             text-transform: uppercase;
@@ -209,7 +209,7 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
 
                         .date {
                             font-family: var(--font-sans);
-                            font-size: 11px;
+                            font-size: clamp(10px, 3vw, 11px);
                             font-weight: 500;
                             letter-spacing: 0.04em;
                             color: var(--text-muted);
@@ -222,9 +222,9 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                             align-items: center;
                             gap: 6px;
                             margin-top: var(--space-md);
-                            padding: 6px 14px;
+                            padding: clamp(4px, 2vw, 6px) clamp(10px, 5vw, 14px);
                             font-family: var(--font-sans);
-                            font-size: 11px;
+                            font-size: clamp(10px, 3vw, 11px);
                             font-weight: 600;
                             letter-spacing: 0.05em;
                             text-transform: uppercase;
@@ -277,15 +277,6 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                         @media (prefers-reduced-motion: reduce) {
                             .card {
                                 animation: none;
-                            }
-                        }
-
-                        @media (max-width: 420px) {
-                            .card {
-                                padding: var(--space-lg) var(--space-md);
-                            }
-                            .verse {
-                                font-size: 19px;
                             }
                         }
                     </style>
