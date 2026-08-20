@@ -9,10 +9,6 @@ export function getThemeTokens(accentColor?: string): string {
     return `
         --bg: var(--vscode-editor-background, #1e1e1e);
         --card-bg: var(--vscode-editorWidget-background, #252526);
-        --border: var(
-            --vscode-widget-border,
-            var(--vscode-panel-border, rgba(128, 128, 128, 0.35))
-        );
         --shadow: var(--vscode-widget-shadow, rgba(0, 0, 0, 0.36));
 
         --text-primary: var(--vscode-editor-foreground, var(--vscode-foreground, #cccccc));
@@ -22,6 +18,7 @@ export function getThemeTokens(accentColor?: string): string {
         --accent: ${accent};
         --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
         --accent-line: color-mix(in srgb, var(--accent) 35%, transparent);
+        --border: color-mix(in srgb, var(--accent) 55%, transparent);
         --bg-glow: radial-gradient(
             circle at 50% 0%,
             color-mix(in srgb, var(--accent) 8%, transparent),
