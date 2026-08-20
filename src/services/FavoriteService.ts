@@ -1,41 +1,6 @@
 import * as vscode from 'vscode';
 import { FavoriteVerse, Verse } from '../models/Verse';
-
-interface Disposable {
-    dispose(): void;
-}
-
-class Emitter<T> {
-    private readonly listeners = new Set<(value: T) => void>();
-
-    readonly event = (
-        listener: (value: T) => void,
-        thisArgs?: unknown,
-        disposables?: Disposable[]
-    ): Disposable => {
-        const boundListener = thisArgs ? listener.bind(thisArgs) : listener;
-
-        this.listeners.add(boundListener);
-
-        const disposable: Disposable = {
-            dispose: () => {
-                this.listeners.delete(boundListener);
-            },
-        };
-
-        disposables?.push(disposable);
-
-        return disposable;
-    };
-
-    fire(value: T): void {
-        this.listeners.forEach((listener) => listener(value));
-    }
-
-    dispose(): void {
-        this.listeners.clear();
-    }
-}
+import { Disposable, Emitter } from '../utils/Emitter';
 
 export class FavoriteService implements Disposable {
     private readonly favoritesKey = 'helloBible.favorites';

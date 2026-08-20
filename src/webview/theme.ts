@@ -1,4 +1,11 @@
-export function getThemeTokens(): string {
+const hexColorPattern = /^#[0-9a-fA-F]{3,8}$/;
+
+export function getThemeTokens(accentColor?: string): string {
+    const accent =
+        accentColor && hexColorPattern.test(accentColor)
+            ? accentColor
+            : 'var(--vscode-textLink-foreground, #d9b26b)';
+
     return `
         --bg: var(--vscode-editor-background, #1e1e1e);
         --card-bg: var(--vscode-editorWidget-background, #252526);
@@ -12,7 +19,7 @@ export function getThemeTokens(): string {
         --text-secondary: var(--vscode-descriptionForeground, #9d9d9d);
         --text-muted: var(--vscode-disabledForeground, #6b6b6b);
 
-        --accent: var(--vscode-textLink-foreground, #d9b26b);
+        --accent: ${accent};
         --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
         --accent-line: color-mix(in srgb, var(--accent) 35%, transparent);
         --bg-glow: radial-gradient(

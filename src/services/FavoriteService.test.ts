@@ -1,33 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import * as vscode from 'vscode';
 import { Verse } from '../models/Verse';
+import { FakeMemento } from '../test/FakeMemento';
 import { FavoriteService } from './FavoriteService';
-
-class FakeMemento implements vscode.Memento {
-    private storage = new Map<string, unknown>();
-
-    keys(): readonly string[] {
-        return [...this.storage.keys()];
-    }
-
-    get<T>(key: string): T | undefined;
-    get<T>(key: string, defaultValue: T): T;
-    get<T>(key: string, defaultValue?: T): T | undefined {
-        if (!this.storage.has(key)) {
-            return defaultValue;
-        }
-
-        return this.storage.get(key) as T;
-    }
-
-    update(key: string, value: unknown): Thenable<void> {
-        this.storage.set(key, value);
-
-        return Promise.resolve();
-    }
-
-    setKeysForSync(keys: readonly string[]): void {}
-}
 
 describe('FavoriteService', () => {
     it('should add a verse to favorites', async () => {

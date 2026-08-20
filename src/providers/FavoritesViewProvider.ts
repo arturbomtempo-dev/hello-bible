@@ -1,12 +1,16 @@
 import * as vscode from 'vscode';
 import { FavoriteVerse } from '../models/Verse';
+import { AccentColorService } from '../services/AccentColorService';
 import { FavoriteService } from '../services/FavoriteService';
 import { getCompactSpacingTokens, getGhostButtonStyles, getThemeTokens } from '../webview/theme';
 
 export class FavoritesViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'hello-bible.favoritesView';
 
-    constructor(private readonly favoriteService: FavoriteService) {}
+    constructor(
+        private readonly favoriteService: FavoriteService,
+        private readonly accentColorService: AccentColorService
+    ) {}
 
     resolveWebviewView(webviewView: vscode.WebviewView): void {
         webviewView.webview.options = {
@@ -19,9 +23,13 @@ export class FavoritesViewProvider implements vscode.WebviewViewProvider {
 
         render();
 
-        const changeSubscription = this.favoriteService.onDidChangeFavorites(render);
+        const favoritesSubscription = this.favoriteService.onDidChangeFavorites(render);
+        const accentColorSubscription = this.accentColorService.onDidChangeAccentColor(render);
 
-        webviewView.onDidDispose(() => changeSubscription.dispose());
+        webviewView.onDidDispose(() => {
+            favoritesSubscription.dispose();
+            accentColorSubscription.dispose();
+        });
 
         webviewView.webview.onDidReceiveMessage((message) => {
             if (message.command === 'removeFavorite' && typeof message.reference === 'string') {
@@ -45,7 +53,7 @@ export class FavoritesViewProvider implements vscode.WebviewViewProvider {
 
                     <style>
                         :root {
-                            ${getThemeTokens()}
+                            ${getThemeTokens(this.accentColorService.getAccentColor())}
                             ${getCompactSpacingTokens()}
                         }
 

@@ -20,6 +20,11 @@
             {
                 "command": "hello-bible.showVerse",
                 "title": "Bible: Show Verse"
+            },
+            {
+                "command": "hello-bible.selectAccentColor",
+                "title": "Bible: Select Accent Color",
+                "icon": "$(gear)"
             }
         ],
         "viewsContainers": {
@@ -47,6 +52,15 @@
                     "id": "hello-bible.favoritesView",
                     "name": "Favoritos - Hello Bible",
                     "icon": "media/book.svg"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "hello-bible.selectAccentColor",
+                    "when": "view == hello-bible.view",
+                    "group": "navigation"
                 }
             ]
         }

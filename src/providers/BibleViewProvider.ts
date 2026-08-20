@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { Verse } from '../models/Verse';
+import { AccentColorService } from '../services/AccentColorService';
 import { BibleService } from '../services/BibleService';
 import { FavoriteService } from '../services/FavoriteService';
 import { getCompactSpacingTokens, getGhostButtonStyles, getThemeTokens } from '../webview/theme';
@@ -10,7 +11,8 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
     constructor(
         private readonly extensionUri: vscode.Uri,
         private readonly bibleService: BibleService,
-        private readonly favoriteService: FavoriteService
+        private readonly favoriteService: FavoriteService,
+        private readonly accentColorService: AccentColorService
     ) {}
 
     resolveWebviewView(webviewView: vscode.WebviewView): void {
@@ -42,9 +44,13 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
 
         void load();
 
-        const changeSubscription = this.favoriteService.onDidChangeFavorites(renderVerse);
+        const favoritesSubscription = this.favoriteService.onDidChangeFavorites(renderVerse);
+        const accentColorSubscription = this.accentColorService.onDidChangeAccentColor(renderVerse);
 
-        webviewView.onDidDispose(() => changeSubscription.dispose());
+        webviewView.onDidDispose(() => {
+            favoritesSubscription.dispose();
+            accentColorSubscription.dispose();
+        });
 
         webviewView.webview.onDidReceiveMessage((message) => {
             if (message.command === 'toggleFavorite' && verse) {
@@ -91,7 +97,7 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
     private getStyles(): string {
         return `
             :root {
-                ${getThemeTokens()}
+                ${getThemeTokens(this.accentColorService.getAccentColor())}
                 ${getCompactSpacingTokens()}
             }
 
