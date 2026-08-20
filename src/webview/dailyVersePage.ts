@@ -1,4 +1,5 @@
 import { Verse } from '../models/Verse';
+import { escapeHtml } from '../utils/html';
 import {
     getBasePageStyles,
     getCompactSpacingTokens,
@@ -283,12 +284,12 @@ export function getVersePage(verse: Verse, isFavorite: boolean, accentColor?: st
             <div class="verse-wrap">
                 <span class="quote-mark">&ldquo;</span>
                 <p id="verse" class="verse">
-                    ${verse.text}
+                    ${escapeHtml(verse.text)}
                 </p>
             </div>
 
             <div class="divider"></div>
-            <p id="reference" class="reference">${verse.reference}</p>
+            <p id="reference" class="reference">${escapeHtml(verse.reference)}</p>
 
             <button
                 id="favoriteButton"

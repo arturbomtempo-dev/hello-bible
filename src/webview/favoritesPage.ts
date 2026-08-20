@@ -1,4 +1,5 @@
 import { FavoriteVerse } from '../models/Verse';
+import { escapeHtml } from '../utils/html';
 import {
     getBasePageStyles,
     getCompactSpacingTokens,
@@ -212,13 +213,13 @@ function getListHtml(favorites: FavoriteVerse[]): string {
             return `
                 <div class="favorite-card">
                     <span class="quote-mark">&ldquo;</span>
-                    <p class="verse">${favorite.text}</p>
-                    <p class="reference">${favorite.reference}</p>
+                    <p class="verse">${escapeHtml(favorite.text)}</p>
+                    <p class="reference">${escapeHtml(favorite.reference)}</p>
                     <p class="favorited-at">Favoritado em ${favoritedAt}</p>
                     <button
                         class="ghost-btn is-active"
                         type="button"
-                        data-remove-reference="${favorite.reference}"
+                        data-remove-reference="${escapeHtml(favorite.reference)}"
                     >
                         ✕ Remover
                     </button>

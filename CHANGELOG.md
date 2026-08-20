@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-20
+
+### Fixed
+
+- Escaped verse text and reference before rendering them in the webviews, so unexpected characters in the Bible API response can no longer be interpreted as HTML.
+- Reduced the extension icon file size from ~1.2 MB to ~72 KB.
+
 ## [1.0.0] - 2026-08-20
 
 ### Added
@@ -19,5 +26,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Loading and error states, with retry, for the daily verse card when the Bible API is unreachable.
 - Extension icon for the VS Code Marketplace.
 
-[unreleased]: https://github.com/arturbomtempo-dev/hello-bible/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/arturbomtempo-dev/hello-bible/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/arturbomtempo-dev/hello-bible/releases/tag/v1.0.1
 [1.0.0]: https://github.com/arturbomtempo-dev/hello-bible/releases/tag/v1.0.0

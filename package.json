@@ -3,7 +3,7 @@
     "publisher": "arturbomtempo-dev",
     "displayName": "Hello Bible",
     "description": "A simple VS Code extension that displays a daily Bible verse.",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "icon": "media/icon.png",
     "repository": {
         "type": "git",
