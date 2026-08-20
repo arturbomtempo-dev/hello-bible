@@ -9,9 +9,9 @@
 </p>
 
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=arturbomtempo-dev.hello-bible"><img src="https://img.shields.io/visual-studio-marketplace/v/arturbomtempo-dev.hello-bible?label=VS%20Code%20Marketplace&color=blue" alt="VS Code Marketplace Version" /></a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=arturbomtempo-dev.hello-bible"><img src="https://img.shields.io/visual-studio-marketplace/i/arturbomtempo-dev.hello-bible?label=Installs" alt="Installs" /></a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=arturbomtempo-dev.hello-bible"><img src="https://img.shields.io/visual-studio-marketplace/r/arturbomtempo-dev.hello-bible?label=Rating" alt="Rating" /></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=arturbomtempo-dev.hello-bible"><img src="https://vsmarketplacebadges.dev/version/arturbomtempo-dev.hello-bible.svg?label=VS%20Code%20Marketplace&color=blue" alt="VS Code Marketplace Version" /></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=arturbomtempo-dev.hello-bible"><img src="https://vsmarketplacebadges.dev/installs/arturbomtempo-dev.hello-bible.svg?label=Installs" alt="Installs" /></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=arturbomtempo-dev.hello-bible"><img src="https://vsmarketplacebadges.dev/rating-star/arturbomtempo-dev.hello-bible.svg?label=Rating" alt="Rating" /></a>
   <a href="https://github.com/arturbomtempo-dev/hello-bible/stargazers"><img src="https://img.shields.io/github/stars/arturbomtempo-dev/hello-bible?label=Stars" alt="GitHub Stars" /></a>
   <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT" /></a>
 </p>
