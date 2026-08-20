@@ -20,6 +20,11 @@
             {
                 "command": "hello-bible.showVerse",
                 "title": "Bible: Show Verse"
+            },
+            {
+                "command": "hello-bible.showFavorites",
+                "title": "Bible: Show Favorite Verses",
+                "icon": "media/book.svg"
             }
         ],
         "views": {
@@ -30,6 +35,15 @@
                     "name": "Hello Bible",
                     "icon": "media/book.svg",
                     "visibility": "collapsed"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "hello-bible.showFavorites",
+                    "when": "view == hello-bible.view",
+                    "group": "navigation"
                 }
             ]
         }

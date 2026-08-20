@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { Verse } from '../models/Verse';
 import { BibleService } from '../services/BibleService';
 import { FavoriteService } from '../services/FavoriteService';
+import { getGhostButtonStyles, getThemeTokens } from '../webview/theme';
 
 export class BibleViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'hello-bible.view';
@@ -26,15 +27,13 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
 
         render();
 
+        const changeSubscription = this.favoriteService.onDidChangeFavorites(render);
+
+        webviewView.onDidDispose(() => changeSubscription.dispose());
+
         webviewView.webview.onDidReceiveMessage((message) => {
             if (message.command === 'toggleFavorite') {
-                const verse = this.bibleService.getDailyVerse();
-                const isFavorite = this.favoriteService.toggleFavorite(verse);
-
-                webviewView.webview.postMessage({
-                    command: 'favoriteUpdated',
-                    isFavorite,
-                });
+                this.favoriteService.toggleFavorite(verse);
             }
         });
     }
@@ -53,37 +52,7 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
 
                     <style>
                         :root {
-                            --bg: var(--vscode-editor-background, #1e1e1e);
-                            --card-bg: var(--vscode-editorWidget-background, #252526);
-                            --border: var(
-                                --vscode-widget-border,
-                                var(--vscode-panel-border, rgba(128, 128, 128, 0.35))
-                            );
-                            --shadow: var(--vscode-widget-shadow, rgba(0, 0, 0, 0.36));
-
-                            --text-primary: var(--vscode-editor-foreground, var(--vscode-foreground, #cccccc));
-                            --text-secondary: var(--vscode-descriptionForeground, #9d9d9d);
-                            --text-muted: var(--vscode-disabledForeground, #6b6b6b);
-
-                            --accent: var(--vscode-textLink-foreground, #d9b26b);
-                            --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
-                            --accent-line: color-mix(in srgb, var(--accent) 35%, transparent);
-                            --bg-glow: radial-gradient(
-                                circle at 50% 0%,
-                                color-mix(in srgb, var(--accent) 8%, transparent),
-                                transparent 55%
-                            );
-
-                            --font-serif:
-                                Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
-                            --font-sans: var(
-                                --vscode-font-family,
-                                -apple-system,
-                                BlinkMacSystemFont,
-                                'Segoe UI',
-                                system-ui,
-                                sans-serif
-                            );
+                            ${getThemeTokens()}
 
                             --space-xs: clamp(4px, 1.5vw, 6px);
                             --space-sm: clamp(6px, 2.5vw, 10px);
@@ -216,50 +185,12 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                             text-align: right;
                         }
 
+                        ${getGhostButtonStyles()}
+
                         .ghost-btn {
-                            display: inline-flex;
-                            align-items: center;
-                            gap: 5px;
                             margin-top: var(--space-sm);
                             padding: 3px 10px;
-                            font-family: var(--font-sans);
                             font-size: clamp(8px, 2.2vw, 9px);
-                            font-weight: 600;
-                            letter-spacing: 0.04em;
-                            text-transform: uppercase;
-                            color: var(--accent);
-                            background: transparent;
-                            border: 1px solid var(--accent-line);
-                            border-radius: 999px;
-                            cursor: pointer;
-                            transition:
-                                background-color 0.15s ease,
-                                border-color 0.15s ease,
-                                transform 0.1s ease;
-                        }
-
-                        .ghost-btn .btn-icon {
-                            width: 12px;
-                            height: 12px;
-                        }
-
-                        .ghost-btn:hover {
-                            background: var(--accent-soft);
-                            border-color: var(--accent);
-                        }
-
-                        .ghost-btn:active {
-                            transform: scale(0.96);
-                        }
-
-                        .ghost-btn:focus-visible {
-                            outline: 2px solid var(--vscode-focusBorder, var(--accent));
-                            outline-offset: 2px;
-                        }
-
-                        .ghost-btn.is-active {
-                            background: var(--accent-soft);
-                            border-color: var(--accent);
                         }
 
                         @keyframes rise {
@@ -329,18 +260,6 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
 
                         favoriteButton.addEventListener('click', () => {
                             vscode.postMessage({ command: 'toggleFavorite' });
-                        });
-
-                        window.addEventListener('message', (event) => {
-                            const message = event.data;
-
-                            if (message.command === 'favoriteUpdated') {
-                                favoriteButton.textContent = message.isFavorite
-                                    ? '★ Favoritado'
-                                    : '☆ Adicionar aos favoritos';
-
-                                favoriteButton.classList.toggle('is-active', message.isFavorite);
-                            }
                         });
                     </script>
                 </body>

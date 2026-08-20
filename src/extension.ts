@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { BibleViewProvider } from './providers/BibleViewProvider';
+import { FavoritesPanel } from './providers/FavoritesPanel';
 import { BibleService } from './services/BibleService';
 import { FavoriteService } from './services/FavoriteService';
 
@@ -7,6 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
     const bibleService = new BibleService();
 
     const favoriteService = new FavoriteService(context.globalState);
+    context.subscriptions.push(favoriteService);
 
     const provider = new BibleViewProvider(context.extensionUri, bibleService, favoriteService);
 
@@ -21,6 +23,15 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(showVerseCommand);
+
+    const showFavoritesCommand = vscode.commands.registerCommand(
+        'hello-bible.showFavorites',
+        () => {
+            FavoritesPanel.show(favoriteService);
+        }
+    );
+
+    context.subscriptions.push(showFavoritesCommand);
 }
 
 export function deactivate() {}

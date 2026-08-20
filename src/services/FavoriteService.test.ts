@@ -43,7 +43,8 @@ describe('FavoriteService', () => {
         const favorites = service.getFavorites();
 
         expect(favorites).toHaveLength(1);
-        expect(favorites[0]).toEqual(verse);
+        expect(favorites[0]).toMatchObject(verse);
+        expect(favorites[0].favoritedAt).toEqual(expect.any(String));
     });
 
     it('should remove a verse from favorites', () => {
@@ -56,7 +57,7 @@ describe('FavoriteService', () => {
 
         service.addFavorite(verse);
 
-        service.removeFavorite(verse);
+        service.removeFavorite(verse.reference);
 
         expect(service.getFavorites()).toHaveLength(0);
     });
@@ -78,5 +79,24 @@ describe('FavoriteService', () => {
 
         expect(removed).toBe(false);
         expect(service.isFavorite(verse)).toBe(false);
+    });
+
+    it('should notify listeners when favorites change', () => {
+        const state = new FakeMemento();
+        const service = new FavoriteService(state);
+        const verse: Verse = {
+            reference: 'João 3:16',
+            text: 'Porque Deus amou o mundo...',
+        };
+
+        let notifications = 0;
+        service.onDidChangeFavorites(() => {
+            notifications++;
+        });
+
+        service.addFavorite(verse);
+        service.removeFavorite(verse.reference);
+
+        expect(notifications).toBe(2);
     });
 });

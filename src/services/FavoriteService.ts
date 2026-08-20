@@ -1,45 +1,85 @@
 import * as vscode from 'vscode';
-import { Verse } from '../models/Verse';
+import { FavoriteVerse, Verse } from '../models/Verse';
 
-export class FavoriteService {
+interface Disposable {
+    dispose(): void;
+}
+
+class Emitter<T> {
+    private readonly listeners = new Set<(value: T) => void>();
+
+    readonly event = (
+        listener: (value: T) => void,
+        thisArgs?: unknown,
+        disposables?: Disposable[]
+    ): Disposable => {
+        const boundListener = thisArgs ? listener.bind(thisArgs) : listener;
+
+        this.listeners.add(boundListener);
+
+        const disposable: Disposable = {
+            dispose: () => {
+                this.listeners.delete(boundListener);
+            },
+        };
+
+        disposables?.push(disposable);
+
+        return disposable;
+    };
+
+    fire(value: T): void {
+        this.listeners.forEach((listener) => listener(value));
+    }
+
+    dispose(): void {
+        this.listeners.clear();
+    }
+}
+
+export class FavoriteService implements Disposable {
     private readonly favoritesKey = 'helloBible.favorites';
+
+    private readonly _onDidChangeFavorites = new Emitter<void>();
+    readonly onDidChangeFavorites = this._onDidChangeFavorites.event;
 
     constructor(private readonly globalState: vscode.Memento) {}
 
-    getFavorites(): Verse[] {
-        return this.globalState.get<Verse[]>(this.favoritesKey, []);
+    getFavorites(): FavoriteVerse[] {
+        return this.globalState.get<FavoriteVerse[]>(this.favoritesKey, []);
     }
 
     isFavorite(verse: Verse): boolean {
-        const favorites = this.getFavorites();
-        return favorites.some((favorite) => favorite.reference === verse.reference);
+        return this.getFavorites().some((favorite) => favorite.reference === verse.reference);
     }
 
     addFavorite(verse: Verse): void {
-        const favorites = this.getFavorites();
-
         if (this.isFavorite(verse)) {
             return;
         }
 
-        favorites.push(verse);
-
-        void this.globalState.update(this.favoritesKey, favorites);
-    }
-
-    removeFavorite(verse: Verse): void {
         const favorites = this.getFavorites();
 
-        const updatedFavorites = favorites.filter(
-            (favorite) => favorite.reference !== verse.reference
-        );
+        favorites.push({ ...verse, favoritedAt: new Date().toISOString() });
+
+        void this.globalState.update(this.favoritesKey, favorites);
+
+        this._onDidChangeFavorites.fire();
+    }
+
+    removeFavorite(reference: string): void {
+        const favorites = this.getFavorites();
+
+        const updatedFavorites = favorites.filter((favorite) => favorite.reference !== reference);
 
         void this.globalState.update(this.favoritesKey, updatedFavorites);
+
+        this._onDidChangeFavorites.fire();
     }
 
     toggleFavorite(verse: Verse): boolean {
         if (this.isFavorite(verse)) {
-            this.removeFavorite(verse);
+            this.removeFavorite(verse.reference);
 
             return false;
         }
@@ -47,5 +87,9 @@ export class FavoriteService {
         this.addFavorite(verse);
 
         return true;
+    }
+
+    dispose(): void {
+        this._onDidChangeFavorites.dispose();
     }
 }
