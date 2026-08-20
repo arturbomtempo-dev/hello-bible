@@ -1,7 +1,6 @@
 export interface AccentColorOption {
     id: string;
     label: string;
-    /** Hex color, or undefined for the "default" option (follows the editor theme). */
     color?: string;
 }
 

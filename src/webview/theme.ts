@@ -50,6 +50,46 @@ export function getCompactSpacingTokens(): string {
     `;
 }
 
+export function getBasePageStyles(): string {
+    return `
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: var(--font-sans);
+            font-size: 12px;
+            background-color: var(--bg);
+            background-image: var(--bg-glow);
+            color: var(--text-primary);
+            padding: var(--space-md) var(--space-sm);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    `;
+}
+
 export function getGhostButtonStyles(): string {
     return `
         .ghost-btn {

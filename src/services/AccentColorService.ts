@@ -9,7 +9,6 @@ export class AccentColorService implements Disposable {
 
     constructor(private readonly globalState: vscode.Memento) {}
 
-    /** Hex color chosen by the user, or undefined to follow the editor theme. */
     getAccentColor(): string | undefined {
         return this.globalState.get<string | undefined>(this.accentColorKey, undefined);
     }

@@ -1,12 +1,13 @@
 {
     "name": "hello-bible",
+    "publisher": "arturbomtempo-dev",
     "displayName": "Hello Bible",
     "description": "A simple VS Code extension that displays a daily Bible verse.",
     "version": "0.0.5",
     "icon": "media/icon.png",
     "repository": {
         "type": "git",
-        "url": "https://github.com/arturbcolen/hello-bible"
+        "url": "https://github.com/arturbomtempo-dev/hello-bible"
     },
     "engines": {
         "vscode": "^1.125.0"
