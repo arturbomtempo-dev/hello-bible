@@ -6,3 +6,8 @@ export interface Verse {
 export interface FavoriteVerse extends Verse {
     favoritedAt: string;
 }
+
+export interface VerseReference {
+    reference: string;
+    apiReference: string;
+}

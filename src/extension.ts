@@ -29,10 +29,16 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
-    const showVerseCommand = vscode.commands.registerCommand('hello-bible.showVerse', () => {
-        const verse = bibleService.getDailyVerse();
+    const showVerseCommand = vscode.commands.registerCommand('hello-bible.showVerse', async () => {
+        try {
+            const verse = await bibleService.getDailyVerse();
 
-        vscode.window.showInformationMessage(`${verse.reference}: ${verse.text}`);
+            vscode.window.showInformationMessage(`${verse.reference}: ${verse.text}`);
+        } catch {
+            vscode.window.showErrorMessage(
+                'Não foi possível carregar o versículo. Verifique sua conexão com a internet.'
+            );
+        }
     });
 
     context.subscriptions.push(showVerseCommand);

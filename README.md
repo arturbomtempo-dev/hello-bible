@@ -7,7 +7,7 @@ Hello Bible was built as a hands-on study of the VS Code Extension API, covering
 ## Features
 
 - **Show a verse on demand.** Run the `Bible: Show Verse` command from the Command Palette and the verse is displayed in an information notification, without leaving your current file.
-- **Zero friction.** No configuration, no account, no network requests. The verse ships with the extension and is shown instantly.
+- **Zero friction.** No configuration, no account required. The verse text is fetched live from a free, public Bible API — no API key needed.
 - **Stays out of your way.** The extension contributes a single command and does nothing until you invoke it.
 
 ### Usage
@@ -20,7 +20,7 @@ The current release ships with a single verse, John 3:16, in Brazilian Portugues
 
 ## Requirements
 
-None. Hello Bible has no runtime dependencies and requires only Visual Studio Code version 1.125.0 or later.
+An internet connection, to fetch the verse text from [bible-api.com](https://bible-api.com) (free, public, no API key). Otherwise, Hello Bible has no runtime dependencies and requires only Visual Studio Code version 1.125.0 or later.
 
 ## Extension Settings
 
