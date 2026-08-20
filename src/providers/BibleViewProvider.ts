@@ -85,39 +85,38 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                                 sans-serif
                             );
 
-                            --space-xs: clamp(6px, 2vw, 8px);
-                            --space-sm: clamp(10px, 4vw, 14px);
-                            --space-md: clamp(14px, 6vw, 24px);
-                            --space-lg: clamp(20px, 10vw, 40px);
-                            --space-xl: clamp(28px, 14vw, 56px);
+                            --space-xs: clamp(4px, 1.5vw, 6px);
+                            --space-sm: clamp(6px, 2.5vw, 10px);
+                            --space-md: clamp(8px, 3.5vw, 14px);
+                            --space-lg: clamp(12px, 5vw, 20px);
+                            --space-xl: clamp(16px, 6.5vw, 26px);
 
-                            --radius: 18px;
+                            --radius: 10px;
                         }
 
                         * {
                             box-sizing: border-box;
                         }
 
-                        html,
-                        body {
-                            height: 100%;
+                        html {
+                            min-height: 100%;
                         }
 
                         body {
                             margin: 0;
+                            min-height: 100%;
                             font-family: var(--font-sans);
+                            font-size: 12px;
                             background-color: var(--bg);
                             background-image: var(--bg-glow);
                             color: var(--text-primary);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            padding: var(--space-lg) var(--space-md);
+                            padding: var(--space-md) var(--space-sm);
                         }
 
                         .container {
                             width: 100%;
-                            max-width: 620px;
+                            max-width: 320px;
+                            margin: 0 auto;
                         }
 
                         .card {
@@ -125,10 +124,10 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                             background: var(--card-bg);
                             border: 1px solid var(--border);
                             border-radius: var(--radius);
-                            padding: var(--space-xl) var(--space-lg);
+                            padding: var(--space-lg) var(--space-md);
                             text-align: center;
-                            box-shadow: 0 24px 60px -20px var(--shadow);
-                            animation: rise 0.5s ease-out;
+                            box-shadow: 0 4px 14px -8px var(--shadow);
+                            animation: rise 0.4s ease-out;
                         }
 
                         .card::before {
@@ -137,7 +136,7 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                             top: -1px;
                             left: 50%;
                             transform: translateX(-50%);
-                            width: 120px;
+                            width: min(80px, 45%);
                             height: 1px;
                             background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
                         }
@@ -147,61 +146,61 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                         }
 
                         .icon {
-                            width: clamp(22px, 9vw, 30px);
-                            height: clamp(22px, 9vw, 30px);
-                            margin: 0 auto var(--space-sm);
+                            width: clamp(14px, 5vw, 18px);
+                            height: clamp(14px, 5vw, 18px);
+                            margin: 0 auto var(--space-xs);
                             color: var(--accent);
                             opacity: 0.9;
                         }
 
                         .eyebrow {
                             font-family: var(--font-sans);
-                            font-size: clamp(9px, 3vw, 11px);
+                            font-size: clamp(8px, 2.2vw, 9px);
                             font-weight: 600;
-                            letter-spacing: 0.18em;
+                            letter-spacing: 0.14em;
                             text-transform: uppercase;
                             color: var(--text-secondary);
-                            margin: 0 0 var(--space-lg);
+                            margin: 0 0 var(--space-md);
                         }
 
                         .verse-wrap {
                             position: relative;
-                            margin-bottom: var(--space-lg);
+                            margin-bottom: var(--space-md);
                         }
 
                         .quote-mark {
                             display: block;
                             font-family: var(--font-serif);
-                            font-size: clamp(36px, 16vw, 64px);
+                            font-size: clamp(18px, 7vw, 24px);
                             line-height: 1;
                             color: var(--accent-soft);
-                            margin-bottom: -0.28em;
+                            margin-bottom: -0.2em;
                             user-select: none;
                         }
 
                         .verse {
                             font-family: var(--font-serif);
                             font-style: italic;
-                            font-size: clamp(15px, 6vw, 22px);
-                            line-height: 1.65;
+                            font-size: clamp(11px, 3.6vw, 13px);
+                            line-height: 1.5;
                             color: var(--text-primary);
                             margin: 0;
                         }
 
                         .divider {
-                            width: clamp(28px, 10vw, 36px);
+                            width: 20px;
                             height: 2px;
                             background: var(--accent);
                             border-radius: 2px;
-                            margin: 0 auto var(--space-sm);
+                            margin: 0 auto var(--space-xs);
                             opacity: 0.8;
                         }
 
                         .reference {
                             font-family: var(--font-sans);
-                            font-size: clamp(11px, 4vw, 13px);
+                            font-size: clamp(9px, 2.8vw, 10px);
                             font-weight: 600;
-                            letter-spacing: 0.08em;
+                            letter-spacing: 0.06em;
                             text-transform: uppercase;
                             color: var(--accent);
                             margin: 0;
@@ -209,24 +208,24 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
 
                         .date {
                             font-family: var(--font-sans);
-                            font-size: clamp(10px, 3vw, 11px);
+                            font-size: clamp(8px, 2.2vw, 9px);
                             font-weight: 500;
-                            letter-spacing: 0.04em;
+                            letter-spacing: 0.03em;
                             color: var(--text-muted);
-                            margin: var(--space-md) 0 0;
+                            margin: var(--space-sm) 0 0;
                             text-align: right;
                         }
 
                         .ghost-btn {
                             display: inline-flex;
                             align-items: center;
-                            gap: 6px;
-                            margin-top: var(--space-md);
-                            padding: clamp(4px, 2vw, 6px) clamp(10px, 5vw, 14px);
+                            gap: 5px;
+                            margin-top: var(--space-sm);
+                            padding: 3px 10px;
                             font-family: var(--font-sans);
-                            font-size: clamp(10px, 3vw, 11px);
+                            font-size: clamp(8px, 2.2vw, 9px);
                             font-weight: 600;
-                            letter-spacing: 0.05em;
+                            letter-spacing: 0.04em;
                             text-transform: uppercase;
                             color: var(--accent);
                             background: transparent;
@@ -240,8 +239,8 @@ export class BibleViewProvider implements vscode.WebviewViewProvider {
                         }
 
                         .ghost-btn .btn-icon {
-                            width: 14px;
-                            height: 14px;
+                            width: 12px;
+                            height: 12px;
                         }
 
                         .ghost-btn:hover {

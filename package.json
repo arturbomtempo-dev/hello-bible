@@ -27,7 +27,7 @@
                 {
                     "type": "webview",
                     "id": "hello-bible.view",
-                    "name": "Bible",
+                    "name": "Hello Bible",
                     "icon": "media/book.svg",
                     "visibility": "collapsed"
                 }
